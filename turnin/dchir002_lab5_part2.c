@@ -50,7 +50,7 @@ void TimerSet(unsigned long M){
 	_avr_timer_cntcurr = _avr_timer_M;
 }
 
-enum State {Start, s1, s2, s22, s3, stopP, stopN, stP} state;
+enum State {Start, s1, s2, s22, s3, stopP, stopN} state;
 
 void Tick(){
 	unsigned char temp = ~PINA;
@@ -61,8 +61,8 @@ void Tick(){
 		case s3: state = (temp == 0x01) ? stopP: s22; break;
 		case s22: state = (temp == 0x01) ? stopP : s1; break;
 		case stopP: state = (temp == 0x01) ? stopP : stopN; break;
-		case stopN: state = (temp == 0x00) ? stopN : stP; break;
-		case stP: state = (temp == 0x00) ? s1 : stP; break;
+		case stopN: state = (temp == 0x00) ? stopN : s1; break;
+		
 		default: state = Start; break;
 	}
 
