@@ -52,6 +52,8 @@ void TimerSet(unsigned long M){
 
 enum State {Start, Wait, Inc, Dec, Reset} state;
 
+unsigned char time = 10;
+
 void Tick(){
         unsigned char temp = ~PINA;
         unsigned char temp2 = PORTB;
@@ -70,9 +72,26 @@ void Tick(){
                                 state = Wait;
                         break;
                 
-                case Inc: state = Wait; break;
-                
-                case Dec: state = Wait; break;
+                case Inc:
+			if ((temp == 0x01) && (time > 0)){
+			 	state = Inc;
+				time--;
+			}
+			else{	
+				time = 10;
+				state = Wait; break;
+			}
+                	break;
+                case Dec:
+		       if ((temp == 0x02) && (time > 0)){
+                                state = Dec;
+                                time--;
+                        }
+                        else{
+                                time = 10;
+                                state = Wait; break;
+                        }	
+			break;
                 case Reset: state = Wait; break;
                 
                 default: state = Start; break;
@@ -82,8 +101,8 @@ void Tick(){
         switch(state){
                 case Start: break;
                 case Wait: break;
-                case Dec: if(temp2 > 0) temp2--; break;
-                case Inc: if(temp2 != 9) temp2++; break;
+                case Dec: if(temp2 > 0 && time == 10) temp2--; break;
+                case Inc: if(temp2 != 9 && time == 10) temp2++; break;
                 case Reset: temp2 = 0x00; break;
                 default: break;
 
